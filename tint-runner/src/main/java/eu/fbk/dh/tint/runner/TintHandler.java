@@ -48,14 +48,26 @@ public class TintHandler extends HttpHandler {
     public void service(Request request, Response response) throws Exception {
 
         request.setCharacterEncoding("UTF-8");
-        String text = request.getParameter("text");
+
+        int contentLength = request.getContentLength();
+        InputStream is = new BufferedInputStream(request.getInputStream());
+        byte[] data = new byte[contentLength];
+
+        int offset = 0;
+        while(offset < contentLength) {
+        final int readNow = is.read(data, offset, contentLength - offset);
+            if (readNow == -1) break;   // Unexpected EOF?
+            offset += readNow;
+        }
+        is.close();
+        String text = new String(data);
+
         String outputFormat = request.getParameter("format");
 
-        InputStream inputStream = new ByteArrayInputStream(text.getBytes());
         OutputStream outputStream = new ByteArrayOutputStream();
 
         TintRunner.OutputFormat format = TintRunner.getOutputFormat(outputFormat, TintRunner.OutputFormat.JSON);
-        pipeline.run(inputStream, outputStream, format);
+        pipeline.run(text, outputStream, format);
 
         LOGGER.debug("Text: {}", text);
 
