@@ -65,7 +65,7 @@ public class TintServer {
 
             httpServer.getServerConfiguration().setSessionTimeoutSeconds(timeoutInSeconds);
             httpServer.getServerConfiguration().setMaxPostSize(4194304);
-            httpServer.getServerConfiguration().addHttpHandler(tintHandler, "/tint");
+            httpServer.getServerConfiguration().addHttpHandler(tintHandler, "/");
 
             httpServer.start();
             Thread.currentThread().join();
